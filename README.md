@@ -4,12 +4,12 @@
 
 **OpenAPI2MD** is a command-line tool designed to convert your **OpenAPI specification** into elegant, human-readable **Markdown documentation**. Ideal for API developers, technical writers, and project maintainers, OpenAPI2MD streamlines the documentation process and ensures your team can quickly generate, update, and maintain API docs with minimal effort. By leveraging modern tooling, templates, and semantic version management, this project aims to deliver a seamless developer experience and foster a collaborative ecosystem around your APIs.
 
-> *Unique Value*: OpenAPI2MD not only generates documentation but also integrates semantic version management and automated reference resolution—helping you keep your documentation consistent, accurate, and aligned with evolving APIs.
+> OpenAPI2MD not only generates documentation but also integrates semantic version management and automated reference resolution—helping you keep your documentation consistent, accurate, and aligned with evolving APIs.
 
 ## Features
 
 - **Automated $ref Dereferencing**: Seamlessly resolves all `$ref` links, ensuring that the final Markdown output is self-contained and easy to follow.
-- **Flexible Templates (Handlebars)**: *Template System*: Create custom Handlebars templates to shape your documentation’s structure and style, enabling full branding and formatting control.
+- **Flexible Templates (Handlebars)**: Create custom Handlebars templates to shape your documentation’s structure and style, enabling full branding and formatting control.
 - **Single or Multiple File Output**: Generate one comprehensive Markdown file or split the docs into multiple files for easier navigation.
 - **Semantic Version Management**: Track, increment, and validate your project’s version history with a built-in version manager that prevents regressions and logs all updates.
 - **Intuitive CLI Commands**: A user-friendly CLI interface allows you to quickly generate docs, bump versions, and configure the tool with minimal complexity.
@@ -20,19 +20,21 @@
 Before installing, ensure you have **Bun** (a fast JavaScript runtime) and **Node.js** available on your system.
 
 **Prerequisites**:  
-- *Bun Runtime*: [Bun](https://bun.sh) version 1.1.38 or later  
-- *Node.js Environment*: Recommended Node.js LTS  
+
+- *Bun Runtime*: [Bun](https://bun.sh) version 1.1.38 or later
 - *TypeScript*: As a peer dependency, ensure TypeScript ^5.0.0 is available
 
 **Steps**:
 
 1. Clone the repository:
+
    ```bash
-   git clone https://github.com/yourusername/openapi2md.git
+   git clone https://github.com/ethan-wickstrom/openapi2md.git
    cd openapi2md
    ```
 
 2. Install dependencies using Bun:
+
    ```bash
    bun install
    ```
@@ -58,14 +60,14 @@ bun start ./path/to/openapi.yaml
 **Example**: Generate a single Markdown file with a custom template and a TOC:
 
 ```bash
-bun run src/main.ts ./my-api.yaml --output docs/api.md --single --template ./my-template.hbs --toc
+bun start ./my-api.yaml --output docs/api.md --single --template ./my-template.hbs --toc
 ```
 
 **Version Management**:  
 Use the built-in version bump command to increment your project version and update references:
 
 ```bash
-bun run src/main.ts version bump patch
+bun start version bump # choose: [patch|minor|major]
 ```
 
 This updates your `package.json` and logs the version increment, preventing accidental regressions.
