@@ -1,10 +1,10 @@
-# OpenAPI2MD
+# **openapi2md**: *Convert OpenAPI documents to Markdown*
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](#) [![Version](https://img.shields.io/badge/version-0.0.1-blue)](#) [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](#)
 
-**OpenAPI2MD** is a command-line tool designed to convert your **OpenAPI specification** into elegant, human-readable **Markdown documentation**. Ideal for API developers, technical writers, and project maintainers, OpenAPI2MD streamlines the documentation process and ensures your team can quickly generate, update, and maintain API docs with minimal effort. By leveraging modern tooling, templates, and semantic version management, this project aims to deliver a seamless developer experience and foster a collaborative ecosystem around your APIs.
+**openapi2md** is a command-line tool designed to convert your **OpenAPI specification** into elegant, human-readable **Markdown documentation**. Ideal for API developers, technical writers, and project maintainers, openapi2md streamlines the documentation process and ensures your team can quickly generate, update, and maintain API docs with minimal effort. By leveraging modern tooling, templates, and semantic version management, this project aims to deliver a seamless developer experience and foster a collaborative ecosystem around your APIs.
 
-> OpenAPI2MD not only generates documentation but also integrates semantic version management and automated reference resolution—helping you keep your documentation consistent, accurate, and aligned with evolving APIs.
+> openapi2md not only generates documentation but also integrates semantic version management and automated reference resolution—helping you keep your documentation consistent, accurate, and aligned with evolving APIs.
 
 ## Features
 
@@ -95,7 +95,7 @@ By contributing, you help shape a tool that streamlines API documentation for co
 
 ## License
 
-OpenAPI2MD is released under the **Apache License 2.0**. You are free to use, modify, and distribute it, subject to the following conditions:
+openapi2md is released under the **Apache License 2.0**. You are free to use, modify, and distribute it, subject to the following conditions:
 
 1. You must include a copy of the license in any redistribution
 2. You must clearly indicate any modifications made to the code
@@ -114,4 +114,4 @@ We extend our gratitude to the open-source community and the authors of essentia
 - [OpenAPI-Types](https://www.npmjs.com/package/openapi-types)
 - [Bun](https://bun.sh)
 
-Your innovations, guidance, and contributions have made OpenAPI2MD possible. Together, we build tools that empower developers worldwide.
+Your innovations, guidance, and contributions have made openapi2md possible. Together, we build tools that empower developers worldwide.
