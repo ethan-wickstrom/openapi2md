@@ -1,11 +1,44 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import type { SemanticVersion } from './core/version-manager';
+import semver from 'semver';
 
 interface FileUpdate {
   filePath: string;
   oldVersion: string;
-  newVersion: string;
+  newVersion: SemanticVersion;
+}
+
+interface UpdateStrategy {
+  detectVersion(content: string): string | null;
+  replaceVersion(content: string, newVersion: string): SemanticVersion;
+}
+
+class PackageJsonUpdateStrategy implements UpdateStrategy {
+  detectVersion(content: string): string | null {
+    const json = JSON.parse(content);
+    return json.version || null;
+  }
+
+  replaceVersion(content: string, newVersion: string): SemanticVersion {
+    const json = JSON.parse(content);
+    json.version = newVersion;
+    return json.version as SemanticVersion;
+  }
+}
+
+class ReadmeUpdateStrategy implements UpdateStrategy {
+  private versionPattern = /(?:version\s*[:=]\s*|v)(\d+\.\d+\.\d+)/i;
+
+  detectVersion(content: string): string | null {
+    const match = content.match(this.versionPattern);
+    return match ? match[1] : null;
+  }
+
+  replaceVersion(content: string, newVersion: string): SemanticVersion {
+    const updatedContent = content.replace(this.versionPattern, `$1${newVersion}`);
+    return updatedContent as SemanticVersion;
+  }
 }
 
 /**
@@ -16,55 +49,45 @@ interface FileUpdate {
  * You can extend this logic easily.
  */
 export class ProjectRefUpdater {
+  private strategies: Record<string, UpdateStrategy> = {
+    'package.json': new PackageJsonUpdateStrategy(),
+    'README.md': new ReadmeUpdateStrategy(),
+    // Add more file-specific strategies here
+  };
+
   constructor(private projectRoot: string) {}
 
   async detectAndUpdateVersion(newVersion: SemanticVersion): Promise<FileUpdate[]> {
-    // You can add more files or patterns here
-    const filesToUpdate = [
-      'package.json',
-      'README.md'
-    ];
-
-    const updates: FileUpdate[] = [];
-
-    for (const file of filesToUpdate) {
-      const filePath = join(this.projectRoot, file);
-      let fileData: string;
-      try {
-        fileData = await fs.readFile(filePath, 'utf-8');
-      } catch {
-        // If the file doesn't exist, skip
-        continue;
-      }
-
-      // Attempt to detect old version in the file
-      // For package.json, we parse JSON.
-      if (file === 'package.json') {
-        const json = JSON.parse(fileData);
-        const oldVersion = json.version;
-        if (oldVersion && oldVersion !== newVersion) {
-          json.version = newVersion;
-          await fs.writeFile(filePath, JSON.stringify(json, null, 2), 'utf-8');
-          updates.push({filePath, oldVersion, newVersion});
-        }
-      } else {
-        // For other files, a naive approach:
-        // If we find a line with the old version, we replace it.
-        // In a real scenario, you'd have a known pattern.
-        const versionRegex = /(\d+\.\d+\.\d+)/g;
-        const matches = fileData.match(versionRegex);
-        if (matches && matches.length > 0) {
-          // Heuristics: assume first match is the version
-          const oldVersion = matches[0];
-          if (oldVersion !== newVersion) {
-            const updatedData = fileData.replace(oldVersion, newVersion);
-            await fs.writeFile(filePath, updatedData, 'utf-8');
-            updates.push({filePath, oldVersion, newVersion});
-          }
-        }
-      }
+    if (!semver.valid(newVersion)) {
+      throw new Error(`Invalid semantic version: ${newVersion}`);
     }
 
-    return updates;
+    const filesToUpdate = Object.keys(this.strategies);
+    const updatePromises = filesToUpdate.map(async (file) => {
+      const filePath = join(this.projectRoot, file);
+      let fileData: string;
+
+      try {
+        fileData = await fs.readFile(filePath, 'utf-8');
+      } catch (error) {
+        console.warn(`File not found: ${filePath}. Skipping.`);
+        return null;
+      }
+
+      const strategy = this.strategies[file];
+      const oldVersion = strategy.detectVersion(fileData);
+
+      if (oldVersion && semver.valid(oldVersion) && semver.lt(oldVersion, newVersion)) {
+        const updatedData = strategy.replaceVersion(fileData, newVersion);
+        await fs.writeFile(filePath, updatedData, 'utf-8');
+        console.log(`Updated ${file} from version ${oldVersion} to ${newVersion}`);
+        return { filePath, oldVersion, newVersion };
+      }
+
+      return null;
+    });
+
+    const updates = await Promise.all(updatePromises);
+    return updates.filter((update): update is FileUpdate => update !== null) as FileUpdate[];
   }
 }
