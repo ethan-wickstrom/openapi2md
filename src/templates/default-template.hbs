@@ -1,0 +1,16 @@
+# {{title}} (v{{version}})
+
+{{#if description}}
+{{description}}
+{{/if}}
+
+{{#if toc}}
+## Table of Contents
+{{#each paths}}
+- [{{path}}](#{{anchor}})
+{{/each}}
+{{/if}}
+
+{{#each paths}}
+{{renderPath this headingLevel}}
+{{/each}}
